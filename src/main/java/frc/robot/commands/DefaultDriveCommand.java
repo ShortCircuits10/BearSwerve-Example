@@ -6,10 +6,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.DRIVE;
-import frc.robot.subsystems.DrivetrainSubsystem;
+import frc.swervelib.SwerveSubsystem;
 
 public class DefaultDriveCommand extends CommandBase {
-    private final DrivetrainSubsystem m_drivetrainSubsystem;
+    private final SwerveSubsystem m_swerveSubsystem;
     private final XboxController m_controller;
     private static final SendableChooser<String> driverChooser = new SendableChooser<>();
     private static final SendableChooser<String> orientationChooser = new SendableChooser<>();
@@ -18,9 +18,9 @@ public class DefaultDriveCommand extends CommandBase {
     private double m_translationY;
     private double m_rotation;
 
-    public DefaultDriveCommand(DrivetrainSubsystem drivetrainSubsystem,
+    public DefaultDriveCommand(SwerveSubsystem swerveSubsystem,
                                XboxController controller) {
-        this.m_drivetrainSubsystem = drivetrainSubsystem;
+        this.m_swerveSubsystem = swerveSubsystem;
         this.m_controller = controller;
 
         // Control Scheme Chooser
@@ -35,7 +35,7 @@ public class DefaultDriveCommand extends CommandBase {
         orientationChooser.addOption("Robot Oriented", "Robot Oriented");
         SmartDashboard.putData("Orientation Chooser", orientationChooser);
 
-        addRequirements(drivetrainSubsystem);
+        addRequirements(swerveSubsystem);
     }
 
     @Override
@@ -68,24 +68,24 @@ public class DefaultDriveCommand extends CommandBase {
 
         switch (orientationChooser.getSelected()) {
           case "Field Oriented":
-            m_drivetrainSubsystem.dt.setModuleStates(
+            m_swerveSubsystem.dt.setModuleStates(
                 DRIVE.KINEMATICS.toSwerveModuleStates(
                     ChassisSpeeds.fromFieldRelativeSpeeds(
-                            m_translationX * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-                            m_translationY * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-                            m_rotation * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND,
-                            m_drivetrainSubsystem.dt.getGyroscopeRotation()
+                            m_translationX * DRIVE.MAX_FWD_REV_SPEED_MPS,
+                            m_translationY * DRIVE.MAX_STRAFE_SPEED_MPS,
+                            m_rotation * DRIVE.MAX_ROTATE_SPEED_RAD_PER_SEC,
+                            m_swerveSubsystem.dt.getGyroscopeRotation()
                     )
                 )    
             );
             break;
           case "Robot Oriented":
-            m_drivetrainSubsystem.dt.setModuleStates(
+            m_swerveSubsystem.dt.setModuleStates(
               DRIVE.KINEMATICS.toSwerveModuleStates(
                   new ChassisSpeeds(
-                          m_translationX * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-                          m_translationY * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-                          m_rotation * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
+                          m_translationX * DRIVE.MAX_FWD_REV_SPEED_MPS,
+                          m_translationY * DRIVE.MAX_STRAFE_SPEED_MPS,
+                          m_rotation * DRIVE.MAX_ROTATE_SPEED_RAD_PER_SEC
                   )
               )    
             );
@@ -95,7 +95,7 @@ public class DefaultDriveCommand extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
-        m_drivetrainSubsystem.dt.setModuleStates(
+        m_swerveSubsystem.dt.setModuleStates(
           DRIVE.KINEMATICS.toSwerveModuleStates(  
             new ChassisSpeeds(0.0, 0.0, 0.0)
           )    

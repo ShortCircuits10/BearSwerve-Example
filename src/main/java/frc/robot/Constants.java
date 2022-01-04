@@ -95,6 +95,7 @@ public final class Constants {
         static public final double MAX_ROTATE_SPEED_RAD_PER_SEC = Units.degreesToRadians(360.0);
         static public final double MAX_TRANSLATE_ACCEL_MPS2 = MAX_FWD_REV_SPEED_MPS/0.25; //0-full time of 0.25 second
         static public final double MAX_ROTATE_ACCEL_RAD_PER_SEC_2 = MAX_ROTATE_SPEED_RAD_PER_SEC/0.25; //0-full time of 0.25 second
+        public static final double MAX_VOLTAGE = 12.0; // Maximum Voltage sent to the drive motors
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // SENSOR CONSTANTS
@@ -112,12 +113,12 @@ public final class Constants {
         public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
         public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
 
-        public static final double kPXController = 1;
-        public static final double kPYController = 1;
-        public static final double kPThetaController = 1;
+        public static final double TRAJECTORYXkP = 1;
+        public static final double TRAJECTORYYkP = 1;
+        public static final double THETACONTROLLERkP = 1;
 
         // Constraint for the motion profilied robot angle controller
-        public static final TrapezoidProfile.Constraints kThetaControllerConstraints =
+        public static final TrapezoidProfile.Constraints THETACONTROLLERCONSTRAINTS =
             new TrapezoidProfile.Constraints(
                 kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
     }

@@ -1,6 +1,7 @@
 package frc.swervelib;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -22,9 +23,7 @@ public class PoseTelemetry {
     Pose2d actualPose = new Pose2d();
 
     public PoseTelemetry() {
-
         SmartDashboard.putData("Field", field);
-
     }
 
     public void setActualPose(Pose2d act) {
@@ -40,10 +39,13 @@ public class PoseTelemetry {
     }
 
     public void update(double time) {
-
         //field.getObject("DesPose").setPose(desiredPose);
-        field.getObject("Robot").setPose(actualPose);
-        //field.getObject("EstPose").setPose(estimatedPose);
+        if (RobotBase.isSimulation()) {
+            field.getObject("Robot").setPose(actualPose);
+        }
+        else {
+            field.getObject("EstPose").setPose(estimatedPose);
+        }
     }
 
 }

@@ -5,16 +5,21 @@ import java.util.ArrayList;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import frc.robot.Constants.AUTO;
 import frc.robot.Constants.DRIVE;
+import frc.robot.Constants.ROBOT;
 import frc.swervelib.Gyroscope;
 import frc.swervelib.GyroscopeHelper;
 import frc.swervelib.Mk4SwerveModuleHelper;
+import frc.swervelib.SwerveConstants;
 import frc.swervelib.SwerveModule;
-import frc.swervelib.sim.SwerveDrivetrainModel;
+import frc.swervelib.SwerveSubsystem;
+import frc.swervelib.SwerveDrivetrainModel;
 import frc.wpiClasses.QuadSwerveSim;
 
 public class BearSwerveHelper {
     public static SwerveDrivetrainModel createBearSwerve() {
+        passConstants();
         ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
         ArrayList<SwerveModule> modules = new ArrayList<SwerveModule>(QuadSwerveSim.NUM_MODULES);
 
@@ -96,5 +101,26 @@ public class BearSwerveHelper {
         modules.add(m_backLeftModule);
         modules.add(m_backRightModule);
         return new SwerveDrivetrainModel(modules, gyro);
+    }
+
+    public static SwerveSubsystem createSwerveSubsystem(SwerveDrivetrainModel dt) {
+        return new SwerveSubsystem(dt);        
+    }
+
+    private static void passConstants() {
+        SwerveConstants.MAX_FWD_REV_SPEED_MPS = DRIVE.MAX_FWD_REV_SPEED_MPS;
+        SwerveConstants.MAX_VOLTAGE = DRIVE.MAX_VOLTAGE;
+        SwerveConstants.DFLT_START_POSE = ROBOT.DFLT_START_POSE;
+
+        SwerveConstants.THETACONTROLLERkP = AUTO.THETACONTROLLERkP;
+        SwerveConstants.TRAJECTORYXkP = AUTO.TRAJECTORYXkP;
+        SwerveConstants.TRAJECTORYYkP = AUTO.TRAJECTORYYkP;
+        SwerveConstants.THETACONTROLLERCONSTRAINTS = AUTO.THETACONTROLLERCONSTRAINTS;
+
+        SwerveConstants.TRACKWIDTH_METERS = DRIVE.TRACKWIDTH_METERS;
+        SwerveConstants.TRACKLENGTH_METERS = DRIVE.WHEELBASE_METERS;
+        SwerveConstants.MASS_kg = ROBOT.MASS_kg;
+        SwerveConstants.MOI_KGM2 = ROBOT.MOI_KGM2;
+        SwerveConstants.KINEMATICS = DRIVE.KINEMATICS;
     }
 }

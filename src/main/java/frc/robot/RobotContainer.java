@@ -14,27 +14,30 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.MoveForward;
 import frc.robot.commands.SemiCircle;
-import frc.robot.subsystems.DrivetrainSubsystem;
+import frc.swervelib.SwerveDrivetrainModel;
+import frc.swervelib.SwerveSubsystem;
 
 public class RobotContainer {
-  public static final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
-  //public static final SwerveSubsystem m_swerveSubsystem = BearSwerveHelper.
+  private static SwerveDrivetrainModel dt;
+  private static SwerveSubsystem m_swerveSubsystem;
 
   private static final XboxController m_controller = new XboxController(0);
 
   private static final SendableChooser<Command> autoChooser = new SendableChooser<>();
 
   public RobotContainer() {
+    dt = BearSwerveHelper.createBearSwerve();
+    m_swerveSubsystem = BearSwerveHelper.createSwerveSubsystem(dt);
     // Set up the default command for the drivetrain.
     // The controls are defined in the command but use both sticks and the triggers on the driver controller
-    m_drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
-            m_drivetrainSubsystem,
+    m_swerveSubsystem.setDefaultCommand(new DefaultDriveCommand(
+            m_swerveSubsystem,
             m_controller
     ));
 
     // Populate Auto Chooser
-    autoChooser.setDefaultOption("Move Forward", new MoveForward(m_drivetrainSubsystem));
-    autoChooser.addOption("Semi-Circle", new SemiCircle(m_drivetrainSubsystem));
+    autoChooser.setDefaultOption("Move Forward", new MoveForward(m_swerveSubsystem));
+    autoChooser.addOption("Semi-Circle", new SemiCircle(m_swerveSubsystem));
     SmartDashboard.putData("Auto Chooser", autoChooser);
 
     // Configure the button bindings
@@ -51,7 +54,7 @@ public class RobotContainer {
     // Back button zeros the gyroscope
     // No requirements because we don't need to interrupt anything
     JoystickButton backButton = new JoystickButton(m_controller, Button.kBack.value);
-    backButton.whenPressed(m_drivetrainSubsystem.dt::zeroGyroscope);
+    backButton.whenPressed(m_swerveSubsystem.dt::zeroGyroscope);
   }
 
   /**

@@ -25,10 +25,3 @@ pluginManagement {
         }
     }
 }
-
-rootProject.name='BearSwerve-Example'
-include 'BearSwerve'
-rootProject.children[0].buildFileName = "GrouchLib.gradle"
-if (!rootProject.children[0].buildFile.isFile()) {
-    rootProject.children[0].buildFileName = "build.gradle"
-}

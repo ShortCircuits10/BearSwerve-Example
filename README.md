@@ -32,6 +32,6 @@ our encoder values displayed to the dashboard.
 6. Make sure all the wheels are spinning in the correct direction. If not, add 180 degrees to the offset of each wheel 
 that is spinning in the incorrect direction. (I.e. `-Math.toRadians(<angle> + 180.0))`)
 
-### Adding BearSwerve
+### Adding the BearSwerve Vendordep
 
-Open a new terminal (Terminal->New Terminal) and type: `git submodule add https://github.com/6391-Ursuline-Bearbotics/BearSwerve src\main\java\frc\bearswerve`
+Click the WPILib Icon in the upper right corner of the screen.  Choose "WPILib: Manage Vendor Libraries".  Then choose "Install new libraries (online)" and then paste this URL: `https://raw.githubusercontent.com/6391-Ursuline-Bearbotics/BearSwerve/master/BearSwerve.json`

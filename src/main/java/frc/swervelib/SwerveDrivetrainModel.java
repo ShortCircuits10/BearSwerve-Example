@@ -15,7 +15,6 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.wpiClasses.QuadSwerveSim;
 import frc.wpiClasses.SwerveModuleSim;
@@ -32,7 +31,6 @@ public class SwerveDrivetrainModel {
 
     Gyroscope gyro;
 
-    Field2d field;
     Pose2d endPose;
     PoseTelemetry dtPoseView;
 
@@ -58,11 +56,8 @@ public class SwerveDrivetrainModel {
         }
         
         thetaController.enableContinuousInput(-Math.PI, Math.PI);
-
-        field = PoseTelemetry.field;
-        field.setRobotPose(SwerveConstants.DFLT_START_POSE);
+        
         endPose = SwerveConstants.DFLT_START_POSE;
-        dtPoseView = new PoseTelemetry();
 
         swerveDt = new QuadSwerveSim(SwerveConstants.TRACKWIDTH_METERS,
                                     SwerveConstants.TRACKLENGTH_METERS,
@@ -88,6 +83,8 @@ public class SwerveDrivetrainModel {
                 SimConstants.CTRLS_SAMPLE_RATE_SEC);
 
         setKnownPose(SwerveConstants.DFLT_START_POSE);
+
+        dtPoseView = new PoseTelemetry(swerveDt, m_poseEstimator);
     }
 
     /**
@@ -97,9 +94,7 @@ public class SwerveDrivetrainModel {
      * @param pose
      */
     public void modelReset(Pose2d pose){
-        field.setRobotPose(pose);
         swerveDt.modelReset(pose);
-        resetPose(pose);
     }
 
     /**
@@ -108,15 +103,6 @@ public class SwerveDrivetrainModel {
      * @param batteryVoltage
      */
     public void update(boolean isDisabled, double batteryVoltage){
- 
-        // Check if the user moved the robot with the Field2D
-        // widget, and reset the model if so.
-        Pose2d startPose = field.getRobotPose();
-        Transform2d deltaPose = startPose.minus(endPose);
-        if(deltaPose.getRotation().getDegrees() > 0.01 || deltaPose.getTranslation().getNorm() > 0.01){
-            modelReset(startPose);
-        }
-
         // Calculate and update input voltages to each motor.
         if(isDisabled){
             for(int idx = 0; idx < QuadSwerveSim.NUM_MODULES; idx++){
@@ -132,7 +118,6 @@ public class SwerveDrivetrainModel {
 
         //Update the main drivetrain plant model
         swerveDt.update(SimConstants.SIM_SAMPLE_RATE_SEC);
-        endPose = swerveDt.getCurPose();
 
         // Update each encoder
         for(int idx = 0; idx < QuadSwerveSim.NUM_MODULES; idx++){
@@ -150,7 +135,6 @@ public class SwerveDrivetrainModel {
         }
 
         // Update associated devices based on drivetrain motion
-        field.setRobotPose(endPose);
         gyro.setAngle(swerveDt.getCurPose().getRotation().getDegrees());
 
         // Based on gyro and measured module speeds and positions, estimate where our
@@ -181,11 +165,7 @@ public class SwerveDrivetrainModel {
     }
 
     public Pose2d getCurActPose(){
-        return field.getRobotObject().getPose();
-    }
-
-    public void resetPose(Pose2d pose){
-        modelReset(pose);
+        return dtPoseView.field.getRobotObject().getPose();
     }
 
     public Pose2d getEstPose() {
@@ -197,7 +177,7 @@ public class SwerveDrivetrainModel {
         // No need to reset gyro, pose estimator does that.
         m_poseEstimator.resetPosition(in, getGyroscopeRotation());
         updateDownfieldFlag();
-        resetPose(in);
+        curEstPose = in;
     }
 
     public void updateDownfieldFlag() {
@@ -214,12 +194,6 @@ public class SwerveDrivetrainModel {
     }
 
     public void updateTelemetry(){
-        if(RobotBase.isSimulation()){
-            dtPoseView.setActualPose(getCurActPose());
-        }
-        dtPoseView.setEstimatedPose(getEstPose());
-        //dtPoseView.setDesiredPose(getCurDesiredPose());
-
         dtPoseView.update(Timer.getFPGATimestamp()*1000);
     }
 
